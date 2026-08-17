@@ -1,0 +1,80 @@
+{
+  "name": "@wujiee/react-markdown-editor",
+  "version": "0.1.0",
+  "description": "A lightweight, themeable Markdown editor for React forms.",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm test && pnpm build"
+  },
+  "keywords": [
+    "react",
+    "markdown",
+    "editor",
+    "wysiwyg",
+    "textarea",
+    "form"
+  ],
+  "author": "WUJIEE",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://wujiee.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wujiee-labs/react-markdown-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wujiee-labs/react-markdown-editor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0",
+    "turndown": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@types/turndown": "^5.0.5",
+    "@vitejs/plugin-react": "^4.5.0",
+    "happy-dom": "^18.0.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "packageManager": "pnpm@9.4.0"
+}

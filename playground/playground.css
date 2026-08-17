@@ -1,0 +1,95 @@
+:root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { margin: 0; }
+button { font: inherit; }
+.wujiee-demo {
+  --color-primary: #2c2f31;
+  --color-cta: #e97858;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f4eee7;
+  --color-text: #2c2723;
+  --color-muted: #7d746b;
+  --color-outline-variant: #ded6cd;
+  --button-primary-text: #ffffff;
+  min-height: 100vh;
+  padding: clamp(24px, 5vw, 72px) 20px;
+  background: #fff8f1;
+  color: var(--color-text);
+}
+.wujiee-demo[data-theme='dark'] {
+  --color-primary: #f5f5f7;
+  --color-cta: #ffb096;
+  --color-surface: #151515;
+  --color-surface-soft: #24201c;
+  --color-text: #fff7ef;
+  --color-muted: #c5b9ad;
+  --color-outline-variant: #3a342f;
+  --button-primary-text: #111111;
+  background: #0b0907;
+}
+.wujiee-demo__card { max-width: 1120px; margin: 0 auto; }
+.wujiee-demo__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.wujiee-demo__header h1 { margin: 4px 0 8px; font-size: clamp(28px, 4vw, 44px); line-height: 1.15; }
+.wujiee-demo__header p { margin: 0; color: var(--color-muted); }
+.wujiee-demo__eyebrow { color: var(--color-cta) !important; font-weight: 700; letter-spacing: 0.04em; }
+.wujiee-demo__theme,
+.wujiee-demo__submit { border: 0; border-radius: 8px; cursor: pointer; font-weight: 700; }
+.wujiee-demo__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.wujiee-demo__theme { padding: 10px 14px; background: var(--color-surface-soft); color: var(--color-text); }
+.wujiee-demo__label { display: block; margin-bottom: 8px; font-weight: 700; }
+.wujiee-demo__submit { margin-top: 18px; padding: 11px 24px; background: var(--color-primary); color: var(--button-primary-text); }
+.wujiee-docs { margin-top: 64px; }
+.wujiee-docs__header { max-width: 760px; margin-bottom: 24px; }
+.wujiee-docs__header h2 { margin: 5px 0 10px; font-size: clamp(26px, 3vw, 36px); }
+.wujiee-docs__header p,
+.wujiee-docs__panel > p { color: var(--color-muted); line-height: 1.7; }
+.wujiee-docs__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
+.wujiee-docs__panel {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.wujiee-docs__panel--wide { margin-bottom: 16px; }
+.wujiee-docs__panel h3 { margin: 0 0 14px; font-size: 17px; }
+.wujiee-docs__panel h3:not(:first-child) { margin-top: 24px; }
+.wujiee-docs__panel pre {
+  max-width: 100%;
+  margin: 0;
+  overflow: auto;
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  font: 13px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  white-space: pre;
+}
+.wujiee-docs__live { max-height: 300px; }
+.wujiee-docs__table-wrap { overflow-x: auto; }
+.wujiee-docs__table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+.wujiee-docs__table th,
+.wujiee-docs__table td { padding: 11px 12px; border-bottom: 1px solid var(--color-outline-variant); vertical-align: top; }
+.wujiee-docs__table th { color: var(--color-muted); font-weight: 700; white-space: nowrap; }
+.wujiee-docs__table td code,
+.wujiee-docs__list code,
+.wujiee-docs__panel p code { padding: 2px 5px; border-radius: 5px; background: var(--color-surface-soft); font-size: 12px; }
+.wujiee-docs__list { margin: 0; padding-left: 20px; color: var(--color-muted); line-height: 1.9; }
+.wujiee-docs__key-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+  margin: 16px 0 0;
+  padding: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.6;
+  list-style: none;
+}
+.wujiee-docs__key-list code { color: var(--color-text); }
+@media (max-width: 760px) {
+  .wujiee-demo__header { flex-direction: column; }
+  .wujiee-docs { margin-top: 44px; }
+  .wujiee-docs__grid { grid-template-columns: 1fr; }
+  .wujiee-docs__panel { padding: 16px; }
+  .wujiee-docs__key-list { grid-template-columns: 1fr; }
+}

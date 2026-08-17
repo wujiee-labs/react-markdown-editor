@@ -1,0 +1,50 @@
+WUJIEE Attribution and Backlink License, Version 1.1
+
+Copyright (c) 2026 WUJIEE. All rights reserved.
+
+Permission is granted, free of charge, to any individual or organization
+obtaining a copy of this software and associated documentation files (the
+"Software"), to use, copy, modify, distribute, and include the Software in
+personal and commercial products, provided that at least one of the following
+conditions is satisfied in every product using the Software:
+
+1. Component attribution
+
+   The visible, clickable "WUJIEE" attribution link to https://wujiee.com
+   included at the bottom-right of the component remains present and
+   functional in every rendered instance of the Software.
+
+2. Product backlink
+
+   The product or website using the Software includes a visible, clickable,
+   direct hyperlink to https://wujiee.com. When this condition is satisfied,
+   the user may modify the source code to remove the "WUJIEE" attribution
+   displayed inside the component.
+
+The official package does not provide a property, option, or runtime switch for
+removing the component attribution. Users relying on the product-backlink
+condition must make and maintain that source-code modification themselves.
+
+The following conditions also apply:
+
+3. The selected attribution link or product backlink must not be hidden,
+   obscured, disabled, redirected, or altered in a way that prevents a
+   reasonable user from identifying and following it.
+
+4. This copyright notice and license must be included with source and binary
+   redistributions of the Software.
+
+5. Commercial use is not permitted when neither the component-attribution
+   condition nor the product-backlink condition is satisfied. A separate
+   written license from WUJIEE is required for such use.
+
+6. This license does not grant permission to use WUJIEE trademarks, logos, or
+   branding except for the attribution described above.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
