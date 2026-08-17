@@ -169,7 +169,7 @@ pnpm build
 
 ## License
 
-本项目采用 [WUJIEE Attribution and Backlink License 1.1](./LICENSE)。个人及商业免费使用需要满足以下任意一种条件：
+本项目采用 [WUJIEE Attribution and Backlink License 1.1](./LICENSE)。满足以下任意一种条件允许免费商用：
 
 1. 保留组件右下角可见、可点击的 [WUJIEE](https://wujiee.com) 链接。
 2. 在使用该组件的产品或网站中加入可见、可点击且直接指向 [wujiee.com](https://wujiee.com) 的外链；满足后允许自行修改源码，移除组件内的 WUJIEE 署名。
@@ -177,11 +177,13 @@ pnpm build
 ---
 
 <p align="center">
-  <img src="https://wujiee.com/logo.svg" width="20" height="20" alt="WUJIEE云工作" align="absmiddle">
-  <a href="https://wujiee.com/"><strong>WUJIEE云工作</strong></a> 是专注于远程工作与远程项目自由合作的垂直远程协助平台，为企业和人才提供远程招聘、自由职业接单与在线协作服务。
+  <strong>招人难、项目等人、远程机会难找？</strong><br>
+  来 WUJIEE 云工作，免费发布远程职位与项目需求，连接专业人才与优质机会，从招聘、求职、接单到项目协作，全流程在线搞定。
 </p>
 
 <p align="center">
+  <img src="https://wujiee.com/logo.svg" width="20" height="20" alt="WUJIEE云工作" align="absmiddle">
+  <a href="https://wujiee.com/">主页</a> ·
   <a href="https://wujiee.com/talents">人才市场</a> ·
   <a href="https://wujiee.com/jobs">职位市场</a> ·
   <a href="https://wujiee.com/projects">项目市场</a>
