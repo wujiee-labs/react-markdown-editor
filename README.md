@@ -158,10 +158,6 @@ const colors = {
 
 组件还提供 `onFocus`、`onBlur`、`onModeChange`、`onResize`、`onLimit`、`onImageUploaded` 和 `onImageUploadError` 等事件。
 
-## WUJIEE 命名
-
-组件 DOM 类名统一使用 `wujiee-md-*`，CSS 自定义属性统一使用 `--wujiee-md-*`，表格数据属性和组件内部状态类也使用 WUJIEE 前缀。推荐使用主组件名 `WujieeMarkdownEditor`；`MarkdownEditor` 仅作为兼容别名保留。
-
 ## 本地开发
 
 ```bash
@@ -178,10 +174,15 @@ pnpm build
 1. 保留组件右下角可见、可点击的 [WUJIEE](https://wujiee.com) 链接。
 2. 在使用该组件的产品或网站中加入可见、可点击且直接指向 [wujiee.com](https://wujiee.com) 的外链；满足后允许自行修改源码，移除组件内的 WUJIEE 署名。
 
-官方组件不提供隐藏署名的参数或运行时开关；选择第二种方式时，需要使用者自行修改并维护源码。
-
 ---
 
-<img src="https://wujiee.com/logo.svg" width="20" height="20" alt="" align="absmiddle"> [WUJIEE云工作](https://wujiee.com/) 是专注于远程工作与远程项目自由合作的垂直远程协助平台，为企业和人才提供远程招聘、自由职业接单与在线协作服务。
+<p align="center">
+  <img src="https://wujiee.com/logo.svg" width="20" height="20" alt="WUJIEE云工作" align="absmiddle">
+  <a href="https://wujiee.com/"><strong>WUJIEE云工作</strong></a> 是专注于远程工作与远程项目自由合作的垂直远程协助平台，为企业和人才提供远程招聘、自由职业接单与在线协作服务。
+</p>
 
-[人才市场](https://wujiee.com/talents) · [职位市场](https://wujiee.com/jobs) · [项目市场](https://wujiee.com/projects)
+<p align="center">
+  <a href="https://wujiee.com/talents">人才市场</a> ·
+  <a href="https://wujiee.com/jobs">职位市场</a> ·
+  <a href="https://wujiee.com/projects">项目市场</a>
+</p>

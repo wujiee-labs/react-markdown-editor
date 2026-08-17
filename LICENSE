@@ -21,10 +21,6 @@ conditions is satisfied in every product using the Software:
    the user may modify the source code to remove the "WUJIEE" attribution
    displayed inside the component.
 
-The official package does not provide a property, option, or runtime switch for
-removing the component attribution. Users relying on the product-backlink
-condition must make and maintain that source-code modification themselves.
-
 The following conditions also apply:
 
 3. The selected attribution link or product backlink must not be hidden,
