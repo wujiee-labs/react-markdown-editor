@@ -52,8 +52,8 @@
     "access": "public"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
+    "react": ">=17.0.0 <20.0.0",
+    "react-dom": ">=17.0.0 <20.0.0"
   },
   "dependencies": {
     "markdown-it": "^14.1.0",
@@ -74,7 +74,7 @@
     "vitest": "^3.2.4"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=18.0.0"
   },
   "packageManager": "pnpm@9.4.0"
 }

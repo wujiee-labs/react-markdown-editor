@@ -17,10 +17,10 @@ GitHub：[wujiee-labs/react-markdown-editor](https://github.com/wujiee-labs/reac
 
 | 环境 | 支持范围 |
 | --- | --- |
-| React | `18.x`、`19.x` |
-| React DOM | `18.x`、`19.x`，需与 React 主版本一致 |
-| Node.js | `>=18.18.0` |
-| TypeScript | `5.x`（可选，JavaScript 项目可直接使用） |
+| React | `17.x`、`18.x`、`19.x` |
+| React DOM | `17.x`、`18.x`、`19.x`，需与 React 主版本一致 |
+| Node.js | `>=18.0.0` |
+| TypeScript | `>=4.7.0`（可选，JavaScript 项目可直接使用） |
 | 浏览器 | 支持 ES2020 的现代浏览器；不支持 IE |
 | 模块格式 | ESM、CommonJS |
 
