@@ -13,6 +13,19 @@ GitHub：[wujiee-labs/react-markdown-editor](https://github.com/wujiee-labs/reac
 
 其他框架版本：[Vue 3 版本](https://github.com/wujiee-labs/vue3-markdown-editor)
 
+## 环境要求
+
+| 环境 | 支持范围 |
+| --- | --- |
+| React | `18.x`、`19.x` |
+| React DOM | `18.x`、`19.x`，需与 React 主版本一致 |
+| Node.js | `>=18.18.0` |
+| TypeScript | `5.x`（可选，JavaScript 项目可直接使用） |
+| 浏览器 | 支持 ES2020 的现代浏览器；不支持 IE |
+| 模块格式 | ESM、CommonJS |
+
+当前版本使用 Node.js 20.19、React 19.1 和 TypeScript 5.9 完成构建与测试。参与源码开发建议使用 Node.js `>=20.19.0` 和 pnpm `9.x`。
+
 ## 安装
 
 ```bash
@@ -178,12 +191,11 @@ pnpm build
 
 <p align="center">
   <strong>招人难、项目等人、远程机会难找？</strong><br>
-  来 WUJIEE 云工作，免费发布远程职位与项目需求，连接专业人才与优质机会，从招聘、求职、接单到项目协作，全流程在线搞定。
+  来 <a href="https://wujiee.com/"><strong>WUJIEE 云工作</strong></a>，免费发布远程职位与项目需求，连接专业人才与优质机会，从招聘、求职、接单到项目协作，全流程在线搞定。
 </p>
 
 <p align="center">
   <img src="https://wujiee.com/logo.svg" width="20" height="20" alt="WUJIEE云工作" align="absmiddle">
-  <a href="https://wujiee.com/">主页</a> ·
   <a href="https://wujiee.com/talents">人才市场</a> ·
   <a href="https://wujiee.com/jobs">职位市场</a> ·
   <a href="https://wujiee.com/projects">项目市场</a>
