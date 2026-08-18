@@ -62,7 +62,10 @@ turndown.addRule('table', {
 })
 
 export function convertWujieeHtmlToMarkdown(html: string): string {
-  return turndown.turndown(html).replace(/\n{3,}/g, '\n\n').trim()
+  return turndown.turndown(html)
+    .replace(/^-\s+\[([ xX])\]\s+/gm, '- [$1] ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
 }
 
 export const htmlToMarkdown = convertWujieeHtmlToMarkdown

@@ -12,7 +12,7 @@ describe('htmlToMarkdown', () => {
   it('preserves strikethrough and task checkboxes', () => {
     const markdown = htmlToMarkdown('<p><s>removed</s></p><ul><li><input type="checkbox" checked disabled>done</li></ul>')
     expect(markdown).toContain('~~removed~~')
-    expect(markdown).toContain('[x] done')
+    expect(markdown).toContain('- [x] done')
   })
 
   it('converts rich text tables to Markdown tables', () => {

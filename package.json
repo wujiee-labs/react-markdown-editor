@@ -1,6 +1,6 @@
 {
   "name": "@wujiee/react-markdown-editor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A lightweight, themeable Markdown editor for React forms.",
   "type": "module",
   "files": [

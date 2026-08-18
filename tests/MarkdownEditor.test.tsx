@@ -240,6 +240,16 @@ describe('MarkdownEditor', () => {
     Reflect.deleteProperty(document, 'execCommand')
   })
 
+  it('allows checking task items while editing and persists the checked state', async () => {
+    const change = vi.fn()
+    await render(<MarkdownEditor value="- [ ] 任务" editorType="wysiwyg" onChange={change} />)
+    const checkbox = container.querySelector('.wujiee-md-task-list-checkbox') as HTMLInputElement
+    expect(checkbox.disabled).toBe(false)
+    act(() => checkbox.click())
+    expect(checkbox.checked).toBe(true)
+    expect(String(change.mock.calls.at(-1)?.[0])).toContain('- [x] 任务')
+  })
+
   it('supports image uploads and Markdown table insertion', async () => {
     const imageUpload = vi.fn().mockResolvedValue({ url: 'https://cdn.example.com/demo.png', alt: 'demo' })
     const change = vi.fn()
@@ -305,5 +315,10 @@ describe('MarkdownEditor', () => {
     inputTextarea(container.querySelector('textarea')!, '中A😀B')
     expect(limit).toHaveBeenLastCalledWith(3)
     expect(change).not.toHaveBeenCalled()
+  })
+
+  it('shows only the character count and limit in the status bar', async () => {
+    await render(<MarkdownEditor value="中A😀" maxLength={3} />)
+    expect(container.querySelector('.wujiee-md-statusbar > span')?.textContent).toBe('3 / 3')
   })
 })

@@ -309,8 +309,8 @@
   font-weight: 700;
   line-height: 1.3;
 }
-.wujiee-md-preview h1 { padding-bottom: 0.35em; border-bottom: 1px solid var(--wujiee-md-border); font-size: 2em; }
-.wujiee-md-preview h2 { padding-bottom: 0.3em; border-bottom: 1px solid var(--wujiee-md-border); font-size: 1.55em; }
+.wujiee-md-preview h1 { font-size: 2em; }
+.wujiee-md-preview h2 { font-size: 1.55em; }
 .wujiee-md-preview h3 { font-size: 1.28em; }
 .wujiee-md-preview h4 { font-size: 1.1em; }
 .wujiee-md-preview p,
@@ -329,6 +329,7 @@
 .wujiee-md-preview li + li { margin-top: 0.22em; }
 .wujiee-md-preview .wujiee-md-task-list-item { list-style: none; }
 .wujiee-md-preview .wujiee-md-task-list-checkbox { margin: 0 0.45em 0 -1.4em; accent-color: var(--wujiee-md-primary); }
+.wujiee-md-rich-editor .wujiee-md-task-list-checkbox { cursor: pointer; }
 .wujiee-md-preview a { color: var(--wujiee-md-primary); text-decoration: underline; text-underline-offset: 0.16em; }
 .wujiee-md-preview img { max-width: 100%; height: auto; border-radius: calc(var(--wujiee-md-radius) * 0.75); }
 .wujiee-md-preview blockquote {

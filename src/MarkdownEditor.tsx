@@ -230,6 +230,10 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     if (editor && editor.innerHTML !== wujieeRenderedHtml) {
       setWujieeActiveTableCell(undefined)
       editor.innerHTML = wujieeRenderedHtml
+      editor.querySelectorAll<HTMLInputElement>('.wujiee-md-task-list-checkbox').forEach(checkbox => {
+        checkbox.disabled = false
+        checkbox.removeAttribute('disabled')
+      })
     }
   }, [wujieeRenderedHtml])
 
@@ -478,7 +482,7 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
 
   const wujieeToggleRichTaskList = useCallback((active: boolean) => {
     if (!active) {
-      document.execCommand('insertHTML', false, `<ul><li class="wujiee-md-task-list-item"><input class="wujiee-md-task-list-checkbox" type="checkbox" disabled> ${wujieeEscapeHtml(wujieeLabels.taskList)}</li></ul>`)
+      document.execCommand('insertHTML', false, `<ul><li class="wujiee-md-task-list-item"><input class="wujiee-md-task-list-checkbox" type="checkbox"> ${wujieeEscapeHtml(wujieeLabels.taskList)}</li></ul>`)
       return
     }
     const item = wujieeRichSelectionElement()?.closest('li')
@@ -1090,6 +1094,12 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
               onKeyDown={wujieeHandleRichKeydown}
               onClick={event => {
                 const target = event.target as Element
+                const checkbox = target.closest('.wujiee-md-task-list-checkbox') as HTMLInputElement | null
+                if (checkbox && wujieeRichEditorRef.current?.contains(checkbox)) {
+                  checkbox.toggleAttribute('checked', checkbox.checked)
+                  wujieeSyncRichValue(true)
+                  return
+                }
                 const cell = target.closest('th, td') as HTMLTableCellElement | null
                 const nextCell = cell && wujieeRichEditorRef.current?.contains(cell) ? cell : undefined
                 setWujieeActiveTableCell(nextCell)
@@ -1103,7 +1113,13 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
               onPointerDown={wujieeHandleTablePointerDown}
               onMouseUp={wujieeSaveRichSelection}
               onKeyUp={wujieeSaveRichSelection}
-              onFocus={event => onFocus?.(event)}
+              onFocus={event => {
+                wujieeRichEditorRef.current?.querySelectorAll<HTMLInputElement>('.wujiee-md-task-list-checkbox').forEach(checkbox => {
+                  checkbox.disabled = false
+                  checkbox.removeAttribute('disabled')
+                })
+                onFocus?.(event)
+              }}
               onBlur={event => {
                 onBlur?.(event)
                 wujieeSyncRichValue()
@@ -1165,7 +1181,7 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
       <div className={`wujiee-md-statusbar${showStatusbar ? '' : ' wujiee-md-statusbar--brand-only'}`}>
         {showStatusbar && (
           <span>
-            {wujieeCharacterCount}{wujieeCharacterLimit ? ` / ${wujieeCharacterLimit}` : ''} {wujieeLabels.characters}
+            {wujieeCharacterCount}{wujieeCharacterLimit ? ` / ${wujieeCharacterLimit}` : ''}
           </span>
         )}
         <a className="wujiee-md-statusbar__brand" href="https://wujiee.com" target="_blank" rel="noopener noreferrer">WUJIEE</a>
