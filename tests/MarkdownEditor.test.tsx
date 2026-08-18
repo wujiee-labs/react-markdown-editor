@@ -159,6 +159,87 @@ describe('MarkdownEditor', () => {
     expect(emitted).not.toContain('**')
   })
 
+  it('reflects heading state and toggles it back to a paragraph', async () => {
+    const execCommand = vi.fn(() => true)
+    Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand })
+    await render(<MarkdownEditor value="## 标题" editorType="wysiwyg" />)
+    const editor = container.querySelector('.wujiee-md-rich-editor') as HTMLDivElement
+    const headingText = editor.querySelector('h2')!.firstChild!
+    const range = document.createRange()
+    range.selectNodeContents(headingText)
+    await act(async () => {
+      window.getSelection()!.removeAllRanges()
+      window.getSelection()!.addRange(range)
+      editor.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+    })
+
+    const headingButton = container.querySelector('button[aria-label="标题"]')!
+    expect(headingButton.classList.contains('wujiee-md-is-active')).toBe(true)
+    expect(headingButton.getAttribute('aria-pressed')).toBe('true')
+    click(headingButton)
+    expect(execCommand).toHaveBeenCalledWith('formatBlock', false, 'p')
+    Reflect.deleteProperty(document, 'execCommand')
+  })
+
+  it('exits a code block after Enter on its empty last line', async () => {
+    const change = vi.fn()
+    await render(<MarkdownEditor value="" editorType="wysiwyg" valueFormat="html" onChange={change} />)
+    const editor = container.querySelector('.wujiee-md-rich-editor') as HTMLDivElement
+    editor.innerHTML = '<pre>const value = 1\n</pre>'
+    const codeText = editor.querySelector('pre')!.firstChild!
+    const range = document.createRange()
+    range.setStart(codeText, codeText.textContent!.length)
+    range.collapse(true)
+    await act(async () => {
+      window.getSelection()!.removeAllRanges()
+      window.getSelection()!.addRange(range)
+      editor.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+      editor.dispatchEvent(new globalThis.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    })
+
+    expect(editor.querySelector('pre')?.nextElementSibling?.tagName).toBe('P')
+    expect(editor.querySelector('pre')?.nextElementSibling?.querySelector('br')).not.toBeNull()
+  })
+
+  it('toggles task-list, inline-code and link formatting from the selection', async () => {
+    const execCommand = vi.fn(() => true)
+    Object.defineProperty(document, 'execCommand', { configurable: true, value: execCommand })
+    await render(<MarkdownEditor value="" editorType="wysiwyg" valueFormat="html" />)
+    const editor = container.querySelector('.wujiee-md-rich-editor') as HTMLDivElement
+    editor.innerHTML = '<ul><li class="wujiee-md-task-list-item"><input type="checkbox" disabled> 任务</li></ul><p><code>代码</code>和<a href="https://wujiee.com">链接</a></p>'
+
+    const selectNode = async (node: Node) => {
+      const range = document.createRange()
+      range.selectNodeContents(node)
+      await act(async () => {
+        window.getSelection()!.removeAllRanges()
+        window.getSelection()!.addRange(range)
+        editor.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }))
+      })
+    }
+
+    await selectNode(editor.querySelector('li')!.lastChild!)
+    const taskButton = container.querySelector('button[aria-label="任务列表"]')!
+    expect(taskButton.classList.contains('wujiee-md-is-active')).toBe(true)
+    click(taskButton)
+    expect(editor.querySelector('input[type="checkbox"]')).toBeNull()
+    expect(execCommand).toHaveBeenCalledWith('insertUnorderedList')
+
+    await selectNode(editor.querySelector('code')!.firstChild!)
+    const codeButton = container.querySelector('button[aria-label="行内代码"]')!
+    expect(codeButton.classList.contains('wujiee-md-is-active')).toBe(true)
+    click(codeButton)
+    expect(editor.querySelector('code')).toBeNull()
+
+    await selectNode(editor.querySelector('a')!.firstChild!)
+    const linkButton = container.querySelector('button[aria-label="链接"]')!
+    expect(linkButton.classList.contains('wujiee-md-is-active')).toBe(true)
+    click(linkButton)
+    expect(editor.querySelector('a')).toBeNull()
+    expect(editor.textContent).toContain('链接')
+    Reflect.deleteProperty(document, 'execCommand')
+  })
+
   it('supports image uploads and Markdown table insertion', async () => {
     const imageUpload = vi.fn().mockResolvedValue({ url: 'https://cdn.example.com/demo.png', alt: 'demo' })
     const change = vi.fn()

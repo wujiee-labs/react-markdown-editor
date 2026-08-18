@@ -149,6 +149,7 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
   const [wujieeLinkError, setWujieeLinkError] = useState('')
   const [wujieeDraggedHeight, setWujieeDraggedHeight] = useState<number>()
   const [wujieeActiveTableCell, setWujieeActiveTableCell] = useState<HTMLTableCellElement>()
+  const [wujieeActiveToolbarItems, setWujieeActiveToolbarItems] = useState<Partial<Record<ToolbarItemName, boolean>>>({})
 
   const wujieeTextareaRef = useRef<HTMLTextAreaElement>(null)
   const wujieeRichEditorRef = useRef<HTMLDivElement>(null)
@@ -285,11 +286,52 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     return Boolean(range && wujieeRichEditorRef.current?.contains(range.commonAncestorContainer))
   }, [])
 
+  const wujieeRichSelectionElement = useCallback(() => {
+    const selected = window.getSelection()
+    const node = selected?.focusNode
+    const element = node instanceof Element ? node : node?.parentElement
+    return element && wujieeRichEditorRef.current?.contains(element) ? element : undefined
+  }, [])
+
+  const wujieeQueryCommandState = useCallback((command: string) => {
+    try {
+      return document.queryCommandState(command)
+    } catch {
+      return false
+    }
+  }, [])
+
+  const wujieeUpdateRichToolbarState = useCallback(() => {
+    if (editorType !== 'wysiwyg' || !wujieeSelectionBelongsToRichEditor()) return
+    const element = wujieeRichSelectionElement()
+    const code = element?.closest('code')
+    const taskListItem = element?.closest('li')?.querySelector('input[type="checkbox"]')
+    setWujieeActiveToolbarItems({
+      heading: Boolean(element?.closest('h1, h2, h3, h4, h5, h6')),
+      bold: wujieeQueryCommandState('bold') || Boolean(element?.closest('strong, b')),
+      italic: wujieeQueryCommandState('italic') || Boolean(element?.closest('em, i')),
+      strike: wujieeQueryCommandState('strikeThrough') || Boolean(element?.closest('s, strike, del')),
+      quote: Boolean(element?.closest('blockquote')),
+      'unordered-list': !taskListItem && (wujieeQueryCommandState('insertUnorderedList') || Boolean(element?.closest('ul'))),
+      'ordered-list': wujieeQueryCommandState('insertOrderedList') || Boolean(element?.closest('ol')),
+      'task-list': Boolean(taskListItem),
+      'inline-code': Boolean(code && !code.closest('pre')),
+      'code-block': Boolean(element?.closest('pre')),
+      link: Boolean(element?.closest('a'))
+    })
+  }, [editorType, wujieeQueryCommandState, wujieeRichSelectionElement, wujieeSelectionBelongsToRichEditor])
+
   const wujieeSaveRichSelection = useCallback(() => {
     if (wujieeSelectionBelongsToRichEditor()) {
       wujieeSavedRichRangeRef.current = window.getSelection()!.getRangeAt(0).cloneRange()
+      wujieeUpdateRichToolbarState()
     }
-  }, [wujieeSelectionBelongsToRichEditor])
+  }, [wujieeSelectionBelongsToRichEditor, wujieeUpdateRichToolbarState])
+
+  useEffect(() => {
+    document.addEventListener('selectionchange', wujieeSaveRichSelection)
+    return () => document.removeEventListener('selectionchange', wujieeSaveRichSelection)
+  }, [wujieeSaveRichSelection])
 
   const wujieeRestoreRichSelection = useCallback(() => {
     if (!wujieeSavedRichRangeRef.current) return
@@ -414,24 +456,65 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     selected.addRange(range)
   }, [wujieeSelectionBelongsToRichEditor])
 
+  const wujieeUnwrapRichElement = useCallback((element: Element) => {
+    const children = Array.from(element.childNodes)
+    const first = children[0]
+    const last = children[children.length - 1]
+    if (!first || !last) return
+    element.replaceWith(...children)
+    const range = document.createRange()
+    range.setStartBefore(first)
+    range.setEndAfter(last)
+    const selected = window.getSelection()
+    selected?.removeAllRanges()
+    selected?.addRange(range)
+  }, [])
+
+  const wujieeToggleRichInlineCode = useCallback(() => {
+    const code = wujieeRichSelectionElement()?.closest('code')
+    if (code && !code.closest('pre')) wujieeUnwrapRichElement(code)
+    else wujieeWrapRichSelection()
+  }, [wujieeRichSelectionElement, wujieeUnwrapRichElement, wujieeWrapRichSelection])
+
+  const wujieeToggleRichTaskList = useCallback((active: boolean) => {
+    if (!active) {
+      document.execCommand('insertHTML', false, `<ul><li class="wujiee-md-task-list-item"><input class="wujiee-md-task-list-checkbox" type="checkbox" disabled> ${wujieeEscapeHtml(wujieeLabels.taskList)}</li></ul>`)
+      return
+    }
+    const item = wujieeRichSelectionElement()?.closest('li')
+    const checkbox = item?.querySelector('input[type="checkbox"]')
+    if (!item || !checkbox) return
+    checkbox.remove()
+    item.classList.remove('wujiee-md-task-list-item')
+    if (item.firstChild?.nodeType === Node.TEXT_NODE) {
+      item.firstChild.textContent = item.firstChild.textContent?.replace(/^\s+/, '') || ''
+    }
+    document.execCommand('insertUnorderedList')
+  }, [wujieeLabels.taskList, wujieeRichSelectionElement])
+
   const wujieeRunRichCommand = useCallback((command: Exclude<ToolbarItemName, 'image'>) => {
     if (!wujieeRichEditorRef.current) return
     wujieeRichEditorRef.current.focus()
     wujieeRestoreRichSelection()
+    wujieeUpdateRichToolbarState()
+    const wasActive = Boolean(wujieeActiveToolbarItems[command])
     switch (command) {
-      case 'heading': document.execCommand('formatBlock', false, 'h2'); break
+      case 'heading': document.execCommand('formatBlock', false, wasActive ? 'p' : 'h2'); break
       case 'bold': document.execCommand('bold'); break
       case 'italic': document.execCommand('italic'); break
       case 'strike': document.execCommand('strikeThrough'); break
-      case 'quote': document.execCommand('formatBlock', false, 'blockquote'); break
+      case 'quote': document.execCommand('formatBlock', false, wasActive ? 'p' : 'blockquote'); break
       case 'unordered-list': document.execCommand('insertUnorderedList'); break
       case 'ordered-list': document.execCommand('insertOrderedList'); break
-      case 'task-list':
-        document.execCommand('insertHTML', false, `<ul><li><input type="checkbox" disabled> ${wujieeEscapeHtml(wujieeLabels.taskList)}</li></ul>`)
+      case 'task-list': wujieeToggleRichTaskList(wasActive); break
+      case 'inline-code': wujieeToggleRichInlineCode(); break
+      case 'code-block': document.execCommand('formatBlock', false, wasActive ? 'p' : 'pre'); break
+      case 'link': {
+        const link = wujieeRichSelectionElement()?.closest('a')
+        if (wasActive && link) wujieeUnwrapRichElement(link)
+        else { wujieeOpenLinkDialog(); return }
         break
-      case 'inline-code': wujieeWrapRichSelection(); break
-      case 'code-block': document.execCommand('formatBlock', false, 'pre'); break
-      case 'link': wujieeOpenLinkDialog(); return
+      }
       case 'table':
         document.execCommand('insertHTML', false, '<table data-wujiee-md-resizable-table="true"><colgroup><col style="width:33.33%"><col style="width:33.33%"><col style="width:33.34%"></colgroup><thead><tr><th>列 1</th><th>列 2</th><th>列 3</th></tr></thead><tbody><tr><td>内容</td><td>内容</td><td>内容</td></tr><tr><td>内容</td><td>内容</td><td>内容</td></tr></tbody></table><p><br></p>')
         break
@@ -439,7 +522,7 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     }
     wujieeSaveRichSelection()
     wujieeSyncRichValue()
-  }, [wujieeLabels.taskList, wujieeOpenLinkDialog, wujieeRestoreRichSelection, wujieeSaveRichSelection, wujieeSyncRichValue, wujieeWrapRichSelection])
+  }, [wujieeActiveToolbarItems, wujieeOpenLinkDialog, wujieeRestoreRichSelection, wujieeRichSelectionElement, wujieeSaveRichSelection, wujieeSyncRichValue, wujieeToggleRichInlineCode, wujieeToggleRichTaskList, wujieeUnwrapRichElement, wujieeUpdateRichToolbarState])
 
   const wujieeTriggerImagePicker = useCallback(() => {
     if (disabled || readOnly || wujieeIsUploadingImage) return
@@ -456,11 +539,8 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
       wujieeTriggerImagePicker()
       return
     }
-    if (command === 'link') {
-      wujieeOpenLinkDialog()
-      return
-    }
     if (editorType === 'wysiwyg') wujieeRunRichCommand(command)
+    else if (command === 'link') wujieeOpenLinkDialog()
     else wujieeRunMarkdownCommand(command)
   }, [disabled, editorType, wujieeOpenLinkDialog, readOnly, wujieeRunMarkdownCommand, wujieeRunRichCommand, wujieeTriggerImagePicker])
 
@@ -726,6 +806,39 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     wujieeRunCommand(shortcut)
   }, [wujieeApplyResult, wujieeCloseLinkDialog, wujieeIsFullscreen, wujieeLinkDialogOpen, wujieeRunCommand, wujieeSelection, wujieeToggleFullscreen])
 
+  const wujieeExitRichCodeBlock = useCallback(() => {
+    const selected = window.getSelection()
+    if (!selected?.rangeCount) return false
+    const range = selected.getRangeAt(0)
+    const pre = wujieeRichSelectionElement()?.closest('pre')
+    if (!pre || !range.collapsed) return false
+
+    const afterRange = document.createRange()
+    afterRange.selectNodeContents(pre)
+    afterRange.setStart(range.startContainer, range.startOffset)
+    const afterFragment = afterRange.cloneContents()
+    if (afterFragment.textContent || afterFragment.querySelector('br')) return false
+
+    const beforeRange = document.createRange()
+    beforeRange.selectNodeContents(pre)
+    beforeRange.setEnd(range.startContainer, range.startOffset)
+    const beforeFragment = beforeRange.cloneContents()
+    const beforeContainer = document.createElement('div')
+    beforeContainer.append(beforeFragment)
+    const hasEmptyLastLine = beforeRange.toString().endsWith('\n') || /<br\s*\/?>\s*$/i.test(beforeContainer.innerHTML)
+    if (!hasEmptyLastLine) return false
+
+    const paragraph = document.createElement('p')
+    paragraph.append(document.createElement('br'))
+    pre.after(paragraph)
+    const exitRange = document.createRange()
+    exitRange.setStart(paragraph, 0)
+    exitRange.collapse(true)
+    selected.removeAllRanges()
+    selected.addRange(exitRange)
+    return true
+  }, [wujieeRichSelectionElement])
+
   const wujieeHandleRichKeydown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape' && wujieeLinkDialogOpen) {
       event.preventDefault()
@@ -733,12 +846,16 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     } else if (event.key === 'Escape' && wujieeIsFullscreen) {
       event.preventDefault()
       wujieeToggleFullscreen()
+    } else if (event.key === 'Enter' && !event.shiftKey && wujieeExitRichCodeBlock()) {
+      event.preventDefault()
+      wujieeSaveRichSelection()
+      wujieeSyncRichValue()
     } else if (event.key === 'Tab') {
       event.preventDefault()
       document.execCommand('insertText', false, '  ')
       wujieeSyncRichValue()
     }
-  }, [wujieeCloseLinkDialog, wujieeIsFullscreen, wujieeLinkDialogOpen, wujieeSyncRichValue, wujieeToggleFullscreen])
+  }, [wujieeCloseLinkDialog, wujieeExitRichCodeBlock, wujieeIsFullscreen, wujieeLinkDialogOpen, wujieeSaveRichSelection, wujieeSyncRichValue, wujieeToggleFullscreen])
 
   const wujieeHandleImageFile = useCallback(async (event: FormEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0]
@@ -819,20 +936,22 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
             {wujieeVisibleToolbar.map(item => {
               const label = item === 'image' && wujieeIsUploadingImage ? wujieeLabels.uploadingImage : wujieeLabels[wujieeToolbarLabelKeys[item]]
               const toolDisabled = disabled || readOnly || (item === 'image' && wujieeIsUploadingImage)
+              const toolActive = editorType === 'wysiwyg' && Boolean(wujieeActiveToolbarItems[item])
               const renderProps: ToolbarRenderProps = {
                 item,
                 label,
                 disabled: toolDisabled,
-                active: false,
+                active: toolActive,
                 action: () => wujieeRunCommand(item)
               }
               return (
                 <span className="wujiee-md-tool-slot" key={item}>
                   {wujieeRenderTool(renderProps, (
                     <button
-                      className="wujiee-md-tool"
+                      className={`wujiee-md-tool${toolActive ? ' wujiee-md-is-active' : ''}`}
                       type="button"
                       aria-label={label}
+                      aria-pressed={toolActive}
                       disabled={toolDisabled}
                       onMouseEnter={event => wujieeShowTooltip(event, label)}
                       onMouseLeave={() => setWujieeTooltip(undefined)}
