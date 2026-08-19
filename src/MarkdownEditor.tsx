@@ -189,6 +189,10 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     () => toolbar.filter(item => toolbarConfig[item] !== false),
     [toolbar, toolbarConfig]
   )
+  const wujieeImageEnabled = useMemo(
+    () => toolbar.includes('image') && toolbarConfig.image !== false,
+    [toolbar, toolbarConfig]
+  )
   const wujieeVisibleViewModes = useMemo(
     () => (['edit', 'split', 'preview'] as EditorMode[]).filter(view => toolbarConfig[view] !== false),
     [toolbarConfig]
@@ -529,13 +533,13 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
   }, [wujieeActiveToolbarItems, wujieeOpenLinkDialog, wujieeRestoreRichSelection, wujieeRichSelectionElement, wujieeSaveRichSelection, wujieeSyncRichValue, wujieeToggleRichInlineCode, wujieeToggleRichTaskList, wujieeUnwrapRichElement, wujieeUpdateRichToolbarState])
 
   const wujieeTriggerImagePicker = useCallback(() => {
-    if (disabled || readOnly || wujieeIsUploadingImage) return
+    if (!wujieeImageEnabled || disabled || readOnly || wujieeIsUploadingImage) return
     if (editorType === 'wysiwyg') wujieeSaveRichSelection()
     if (wujieeFileInputRef.current) {
       wujieeFileInputRef.current.value = ''
       wujieeFileInputRef.current.click()
     }
-  }, [disabled, editorType, wujieeIsUploadingImage, readOnly, wujieeSaveRichSelection])
+  }, [disabled, editorType, wujieeImageEnabled, wujieeIsUploadingImage, readOnly, wujieeSaveRichSelection])
 
   const wujieeRunCommand = useCallback((command: ToolbarItemName) => {
     if (disabled || readOnly) return
@@ -862,6 +866,7 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
   }, [wujieeCloseLinkDialog, wujieeExitRichCodeBlock, wujieeIsFullscreen, wujieeLinkDialogOpen, wujieeSaveRichSelection, wujieeSyncRichValue, wujieeToggleFullscreen])
 
   const wujieeHandleImageFile = useCallback(async (event: FormEvent<HTMLInputElement>) => {
+    if (!wujieeImageEnabled) return
     const file = event.currentTarget.files?.[0]
     if (!file) return
     try {
@@ -893,7 +898,7 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
     } finally {
       setWujieeIsUploadingImage(false)
     }
-  }, [wujieeApplyResult, wujieeCharacterLimit, editorType, imageUpload, maxImageSize, onImageUploadError, onImageUploaded, wujieeRestoreRichSelection, wujieeSaveRichSelection, wujieeSelection, wujieeSyncRichValue])
+  }, [wujieeApplyResult, wujieeCharacterLimit, editorType, imageUpload, maxImageSize, onImageUploadError, onImageUploaded, wujieeImageEnabled, wujieeRestoreRichSelection, wujieeSaveRichSelection, wujieeSelection, wujieeSyncRichValue])
 
   const wujieeShowTooltip = useCallback((event: SyntheticEvent<HTMLElement>, text: string) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -921,14 +926,16 @@ export const WujieeMarkdownEditor = forwardRef<MarkdownEditorHandle, MarkdownEdi
 
   return (
     <div className={wujieeRootClassName} data-theme={theme === 'auto' ? undefined : theme} style={wujieeEditorStyle}>
-      <input
-        ref={wujieeFileInputRef}
-        className="wujiee-md-file-input"
-        type="file"
-        accept={imageAccept}
-        tabIndex={-1}
-        onChange={wujieeHandleImageFile}
-      />
+      {wujieeImageEnabled && (
+        <input
+          ref={wujieeFileInputRef}
+          className="wujiee-md-file-input"
+          type="file"
+          accept={imageAccept}
+          tabIndex={-1}
+          onChange={wujieeHandleImageFile}
+        />
+      )}
 
       {showToolbar && (
         <div className="wujiee-md-toolbar" role="toolbar" aria-label={ariaLabel}>

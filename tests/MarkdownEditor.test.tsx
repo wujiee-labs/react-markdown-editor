@@ -279,6 +279,13 @@ describe('MarkdownEditor', () => {
     expect(String(change.mock.calls.at(-1)?.[0])).toContain('| 列 1 | 列 2 | 列 3 |')
   })
 
+  it('does not render a file input when image support is disabled', async () => {
+    await render(<MarkdownEditor toolbarConfig={{ image: false }} />)
+
+    expect(container.querySelector('button[aria-label="上传图片"]')).toBeNull()
+    expect(container.querySelector('input[type="file"]')).toBeNull()
+  })
+
   it('configures toolbar, colors, and per-button React renderers', async () => {
     await render(
       <MarkdownEditor
